@@ -5,7 +5,7 @@ import { Book } from "./model/book";
 
 const BookQuery = gql`
   query Home {
-    books {
+    books(author: "Doe") {
       title
       author
     }
@@ -27,7 +27,9 @@ function App() {
         <h2>Home</h2>
         <div>
           {books.map((b: Book, i: number) => (
-            <div key={i}>{b.title}</div>
+            <div key={i}>
+              {b.title} ({b.author})
+            </div>
           ))}
         </div>
       </div>

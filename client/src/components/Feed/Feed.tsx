@@ -1,10 +1,10 @@
 import { gql, useQuery } from "@apollo/client";
-import { useCallback } from "react";
+import { useCallback, useRef } from "react";
 import { Book } from "../../model/book";
 
 const BookQuery = gql`
-  query Home {
-    books {
+  query Feed($page: Int) {
+    books(author: "John", page: $page) {
       title
       author
     }
@@ -12,14 +12,23 @@ const BookQuery = gql`
 `;
 
 const Feed = () => {
+  const pageRef = useRef(1);
   const { loading, data, error, fetchMore } = useQuery(BookQuery, {
     fetchPolicy: "cache-first",
+    variables: {
+      page: pageRef.current,
+    },
   });
   const books = (!loading && !error && data.books) || [];
   console.log("feed:", books);
 
   const handleLoadMore = useCallback(() => {
-    fetchMore({});
+    pageRef.current += 1;
+    fetchMore({
+      variables: {
+        page: pageRef.current,
+      },
+    });
   }, []);
 
   return (
@@ -27,7 +36,11 @@ const Feed = () => {
       <h2>Feed</h2>
       <div>
         {books.map((b: Book, i: number) => {
-          return <div key={i}>{b.title}</div>;
+          return (
+            <div key={i}>
+              {b.title} ({b.author})
+            </div>
+          );
         })}
       </div>
       <div>

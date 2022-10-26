@@ -9,6 +9,7 @@ const typeDefs = `#graphql
 
   # This "Book" type defines the queryable fields for every book in our data source.
   type Book {
+    id: String
     title: String
     author: String
   }
@@ -17,41 +18,43 @@ const typeDefs = `#graphql
   # clients can execute, along with the return type for each. In this
   # case, the "books" query returns an array of zero or more Books (defined above).
   type Query {
-    books: [Book]
+    books(author: String, page: Int): [Book]
   }
 `;
 
-// const books = [
-//   {
-//     title: "The Awakening",
-//     author: "Kate Chopin",
-//   },
-//   {
-//     title: "City of Glass",
-//     author: "Paul Auster",
-//   },
-// ];
+const rand = (max: number) => Math.floor(Math.random() * (max + 1));
+const colors = ["White", "Red", "Blue", "Green", "Black", "Pink"];
+const things = ["Plate", "Board", "Plan", "Glass", "Phone", "Cycle"];
+const authors = ["John", "Doe"];
 
-const rand = (max: number) => Math.floor(Math.random() * max);
+const generateData = (n: number) => {
+  const arr = [];
+  for (let i = 0; i < n; i++) {
+    arr.push({
+      id: `${Date.now()}-${rand(5000)}`,
+      title: `${colors[rand(5)]} ${things[rand(5)]}`,
+      author: authors[rand(1)],
+    });
+  }
+  return arr;
+};
 
-const generateBook = () => {
-  return [
-    {
-      title: `The Awakening - ${Date.now()} - ${rand(1000)}`,
-      author: "Kate Chopin",
-    },
-    {
-      title: `City of Glass - ${Date.now()} - ${rand(1000)}`,
-      author: "Paul Auster",
-    },
-  ];
+const BOOKS = generateData(50);
+
+const resolveBooks = (arg) => {
+  const page = arg.page || 1;
+  const pageIndex = (page - 1) * 5;
+  return BOOKS.filter((b) => {
+    if (!arg.author) return true;
+    return arg.author.toLowerCase().indexOf(b.author.toLowerCase()) !== -1;
+  }).slice(pageIndex, pageIndex + 5);
 };
 
 // Resolvers define the technique for fetching the types defined in the
 // schema. This resolver retrieves books from the "books" array above.
 const resolvers = {
   Query: {
-    books: () => generateBook(),
+    books: (_, args) => resolveBooks(args),
   },
 };
 
