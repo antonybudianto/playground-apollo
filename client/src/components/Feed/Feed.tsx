@@ -1,10 +1,11 @@
 import { gql, useQuery } from "@apollo/client";
-import { useCallback, useRef } from "react";
+import { memo, useCallback, useRef } from "react";
 import { Book } from "../../model/book";
 
 const BookQuery = gql`
   query Feed($page: Int) {
     books(author: "John", page: $page) @connection(key: "books-from-feed") {
+      id
       title
       author
     }
@@ -52,4 +53,6 @@ const Feed = () => {
   );
 };
 
-export default Feed;
+const FeedMemo = memo(Feed);
+
+export default FeedMemo;
