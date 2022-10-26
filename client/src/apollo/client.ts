@@ -1,4 +1,5 @@
 import { ApolloClient, InMemoryCache } from "@apollo/client";
+import { extractDirective } from "./util";
 
 const createApolloClient = () => {
   const client = new ApolloClient({
@@ -9,9 +10,27 @@ const createApolloClient = () => {
         Query: {
           fields: {
             books: {
-              keyArgs: ["author"],
-              merge(existing = [], incoming = []) {
-                return [...existing, ...incoming];
+              // args, context
+              keyArgs(_, ctx) {
+                const { directiveName } = extractDirective(ctx.field);
+                switch (directiveName) {
+                  case "books-from-feed": {
+                    return ["@connection", ["key"]];
+                  }
+                  default:
+                    return [];
+                }
+              },
+
+              merge(existing = [], incoming = [], ctx) {
+                const { directiveName } = extractDirective(ctx.field);
+                switch (directiveName) {
+                  case "books-from-feed": {
+                    return [...existing, ...incoming];
+                  }
+                  default:
+                    return incoming;
+                }
               },
             },
           },

@@ -5,7 +5,7 @@ import { Book } from "./model/book";
 
 const BookQuery = gql`
   query Home {
-    books(author: "Doe") {
+    books(author: "John") {
       id
       title
       author
