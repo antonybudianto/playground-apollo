@@ -5,6 +5,7 @@ import { Book } from "../../model/book";
 const BookQuery = gql`
   query Feed($page: Int) {
     books(author: "John", page: $page) {
+      id
       title
       author
     }
