@@ -7,7 +7,14 @@ const createApolloClient = () => {
       addTypename: true,
       typePolicies: {
         Query: {
-          fields: {},
+          fields: {
+            books: {
+              keyArgs: ["author"],
+              merge(existing = [], incoming = []) {
+                return [...existing, ...incoming];
+              },
+            },
+          },
         },
       },
     }),
