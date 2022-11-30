@@ -49,6 +49,7 @@ const Feed = () => {
           Load more
         </button>
       </div>
+      <div>*Notice that Home also get paginated unexpectedly...</div>
     </div>
   );
 };
