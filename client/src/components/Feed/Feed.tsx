@@ -48,10 +48,6 @@ const Feed = () => {
           Load more
         </button>
       </div>
-      <div>
-        *Notice when load more is clicked, the home data is also changed because
-        they share same cache key...
-      </div>
     </div>
   );
 };
